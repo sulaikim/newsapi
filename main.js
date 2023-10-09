@@ -3,52 +3,40 @@ let menus = document.querySelectorAll(".menus button")
 menus.forEach(menu => menu.addEventListener("click",()=>getNewsByTopic(event)))
 
 let searchButton =document.getElementById('search_button');
-
-
-
-const getLatestNews = async() =>{
-  let url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business`)
-
+let url;
+const getNews = async() =>{
   let header = new Headers({'x-api-key':'3J6tln5KVU4-I_IRHJ1UwSDXdB5XYugJw9njrPiBCwo'})
   let response = await fetch(url,{headers:header});
   //ajax axios fetch 등..
   // async 와 await 는 짝꿍이다.
   let data = await response.json()
   // json은 서버통신에서 많이 쓰는 데이터 타입(객체인데 텍스트타입이다.)
-  console.log('this is data:',data)
   news = data.articles
   console.log(news)
   render()
+}
+
+
+const getLatestNews = async() =>{
+  url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business`)
+  getNews()
 };
 
 const getNewsByTopic = async(event) => { 
   let topic = event.target.textContent.toLowerCase()
-  let url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&page_size=10&topic=${topic}`
+  url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&page_size=10&topic=${topic}`
   );
-  let header = new Headers({
-    'x-api-key':'3J6tln5KVU4-I_IRHJ1UwSDXdB5XYugJw9njrPiBCwo'
-  })
-  let response = await fetch(url,{headers:header});
-  let data = await response.json();
-  news=data.articles
-  render()
-  console.log(data)
+  getNews()
 }
-
 
 const getNewsByKeyword = async () =>{
   let keyword = document.getElementById("search_input").value
-  let url = new URL(`https://api.newscatcherapi.com/v2/search?q=${keyword}&page_size=10`);
-  let header = new Headers({
-    'x-api-key':'3J6tln5KVU4-I_IRHJ1UwSDXdB5XYugJw9njrPiBCwo'
-  })
-  let response = await fetch(url,{headers:header});
-  let data = await response.json();
-  news=data.articles
-  render();
+  url = new URL(`https://api.newscatcherapi.com/v2/search?q=${keyword}&page_size=10`);
+  getNews()
 };
 
 
+// UI 그리는 함수 
 const render = () => {
   let newsHTML ="";
   newsHTML = news.map((item) => {
